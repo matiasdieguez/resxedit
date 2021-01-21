@@ -1,0 +1,87 @@
+﻿@page "/"
+@using System.Dynamic
+@using Models
+
+    <RadzenButton Icon="note_add" style="margin-bottom: 10px" Text="Add Resx File" Click="@AddFile" />
+    <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Add" Click="@InsertRow" />
+
+    <RadzenGrid
+        @ref = "_grid"
+        AllowFiltering="true" 
+        AllowSorting="true" 
+        Data="@_model.Items" 
+        ColumnWidth="200px">
+        <Columns>
+            @foreach (var key in _model.Columns)
+            {
+                <RadzenGridColumn TItem="ExpandoObject" Property="@key" Title="@key">
+                    <Template Context="data">
+                        <span>@((data as IDictionary<string, object>)[key].ToString())</span>
+                    </Template>
+                </RadzenGridColumn>
+            }
+        </Columns>
+    </RadzenGrid>
+
+@code {
+
+    Dictionary<string, string> _files = new Dictionary<string, string>();
+    RadzenGrid<ExpandoObject> _grid;
+    GridModel _model;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        var data = new List<ExpandoObject>();
+        
+        dynamic title = new ExpandoObject();
+        title.Key = "Title";
+        title.En = "Title";
+        title.Es = "Título";
+        data.Add(title);
+
+        dynamic name = new ExpandoObject();
+        name.Key = "Name";
+        name.En = "Name";
+        name.Es = "Nombre";
+        data.Add(name);
+
+        _model = new GridModel
+        {
+            Items = data,
+            Columns = new List<string>
+                        {
+                            "Key",
+                            "En",
+                            "Es"
+                        }
+        };
+    }
+
+    void AddFile()
+    {
+        var data = new List<ExpandoObject>();
+        _model = new GridModel
+        {
+            Items = data,
+            Columns = new List<string>
+                        {
+                            "Key",
+                            "En",
+                            "Es"
+                        }
+        };
+    }    
+
+
+    void InsertRow()
+    {
+        dynamic name = new ExpandoObject();
+        name.Key = "(key)";
+        name.En = "(en)";
+        name.Es = "(es)";
+        
+        _grid.InsertRow(name);
+    }    
+
+}
